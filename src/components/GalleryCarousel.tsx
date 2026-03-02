@@ -39,23 +39,29 @@ export default function GalleryCarousel() {
         type="button"
         onClick={() => move(-1)}
         aria-label="Previous gallery images"
-        className="absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-md border border-zinc-200 bg-white px-3 py-2 text-xl leading-none text-zinc-600 shadow-sm transition hover:border-zinc-300 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:text-zinc-100"
+        className="absolute left-0 top-1/2 z-10 hidden -translate-y-1/2 rounded-md border border-zinc-200 bg-white px-3 py-2 text-xl leading-none text-zinc-600 shadow-sm transition hover:border-zinc-300 hover:text-zinc-900 sm:block dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:text-zinc-100"
       >
         {"<"}
       </button>
 
       <div
         ref={trackRef}
-        className="no-scrollbar mx-10 flex gap-3 overflow-x-auto scroll-smooth px-1 pb-1"
+        className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth pb-1 sm:mx-10 sm:px-1"
       >
         {galleryImages.map((item) => (
           <article
             key={item.alt}
             data-gallery-card
-            className="w-40 shrink-0"
+            className="w-[68vw] max-w-[11rem] min-w-[9.5rem] shrink-0 snap-start sm:w-40 sm:max-w-none sm:min-w-0"
           >
             <div className="relative aspect-[4/5] overflow-hidden">
-              <Image src={item.src} alt={item.alt} fill sizes="160px" className="object-cover" />
+              <Image
+                src={item.src}
+                alt={item.alt}
+                fill
+                sizes="(max-width: 640px) 68vw, 160px"
+                className="object-cover"
+              />
             </div>
           </article>
         ))}
@@ -65,7 +71,7 @@ export default function GalleryCarousel() {
         type="button"
         onClick={() => move(1)}
         aria-label="Next gallery images"
-        className="absolute right-0 top-1/2 z-10 -translate-y-1/2 rounded-md border border-zinc-200 bg-white px-3 py-2 text-xl leading-none text-zinc-600 shadow-sm transition hover:border-zinc-300 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:text-zinc-100"
+        className="absolute right-0 top-1/2 z-10 hidden -translate-y-1/2 rounded-md border border-zinc-200 bg-white px-3 py-2 text-xl leading-none text-zinc-600 shadow-sm transition hover:border-zinc-300 hover:text-zinc-900 sm:block dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:text-zinc-100"
       >
         {">"}
       </button>

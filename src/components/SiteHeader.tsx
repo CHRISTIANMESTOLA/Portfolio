@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Container from "@/components/Container";
 import normalImage from "@/images/normal_image.jpg";
@@ -21,6 +21,17 @@ export default function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
 
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth >= 768) {
+        setMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   const toggleTheme = () => {
     setIsDark((prev) => {
       const next = !prev;
@@ -30,14 +41,16 @@ export default function SiteHeader() {
   };
 
   return (
-    <header className="border-b border-zinc-200/80 bg-white/90 backdrop-blur md:sticky md:top-0 md:z-40 dark:border-zinc-800 dark:bg-zinc-950/90">
+    <header className="sticky top-0 z-40 border-b border-zinc-200/80 bg-white/90 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/90">
       <Container>
-        <div className="flex h-16 items-center justify-between gap-4">
-          <Link href="/" className="inline-flex items-center gap-2" aria-label="Go to homepage">
+        <div className="flex h-16 min-w-0 items-center justify-between gap-2 sm:gap-4">
+          <Link href="/" className="inline-flex min-w-0 items-center gap-2" aria-label="Go to homepage">
             <span className="relative inline-flex h-8 w-8 overflow-hidden rounded-xl border border-zinc-300 bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800">
               <Image src={normalImage} alt="CFM logo" fill sizes="32px" className="object-cover" />
             </span>
-            <span className="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">Portfolio</span>
+            <span className="truncate text-sm font-semibold tracking-tight text-zinc-900 max-[360px]:hidden dark:text-zinc-100">
+              Portfolio
+            </span>
           </Link>
 
           <nav aria-label="Main navigation" className="hidden items-center gap-2 md:flex">
@@ -96,7 +109,7 @@ export default function SiteHeader() {
             </button>
           </nav>
 
-          <div className="flex items-center gap-2 md:hidden">
+          <div className="flex shrink-0 items-center gap-2 md:hidden">
             <button
               type="button"
               onClick={toggleTheme}
@@ -161,7 +174,10 @@ export default function SiteHeader() {
             menuOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
           )}
         >
-          <nav aria-label="Mobile navigation" className="min-h-0 pb-4">
+          <nav
+            aria-label="Mobile navigation"
+            className="min-h-0 border-t border-zinc-200/80 pt-2 pb-4 dark:border-zinc-800"
+          >
             <ul className="space-y-1">
               {navItems.map((item) => {
                 const isActive = pathname === item.href;

@@ -43,19 +43,19 @@ export default function HomePage() {
       <Container className="py-7 sm:py-8">
         <HeroCard {...profile} />
 
-        <section className="mt-6 grid gap-4 lg:grid-cols-3" aria-label="Home sections">
+        <section className="mt-6 grid gap-4 sm:gap-5 lg:grid-cols-3" aria-label="Home sections">
           <SectionCard
             title="About Me"
             description="Short placeholder intro"
             className="lg:col-span-2"
           >
-            <p className="text-sm text-justify leading-6 text-zinc-600 dark:text-zinc-400">
+            <p className="text-sm text-justify leading-6 text-zinc-600 break-words dark:text-zinc-400">
 I’m a passionate Web Developer and UI/UX Designer who loves turning ideas into clean, functional, and user-centered digital experiences. I enjoy building modern web applications that are not only visually appealing but also practical and intuitive to use.
             </p>
-            <p className="text-sm mt-2 text-justify leading-6 text-zinc-600 dark:text-zinc-400">
+            <p className="mt-2 text-sm text-justify leading-6 text-zinc-600 break-words dark:text-zinc-400">
 With a background in design, I pay close attention to details from layout and typography to user flow and overall experience. For me, good design is not just about how it looks, but how it works.           </p>
-            <p className="text-sm text-justify leading-6 text-zinc-600 dark:text-zinc-400" >I’m continuously learning and improving my skills to become a better and more effective developer. Every project I build is part of my growth journey refining my fundamentals, exploring new technologies, and pushing myself to write better, cleaner code.</p>
-            <p className="text-sm text-justify mt-2 leading-6 text-zinc-600 dark:text-zinc-400" >I believe growth never stops. I’m building myself one line of code at a time.</p>
+            <p className="text-sm text-justify leading-6 text-zinc-600 break-words dark:text-zinc-400" >I’m continuously learning and improving my skills to become a better and more effective developer. Every project I build is part of my growth journey refining my fundamentals, exploring new technologies, and pushing myself to write better, cleaner code.</p>
+            <p className="mt-2 text-sm text-justify leading-6 text-zinc-600 break-words dark:text-zinc-400" >I believe growth never stops. I’m building myself one line of code at a time.</p>
          
           </SectionCard>
 
@@ -101,7 +101,10 @@ With a background in design, I pay close attention to details from layout and ty
 
               <ul className="space-y-5">
                 {experienceTimeline.map((item, index) => (
-                  <li key={`${item.role}-${item.year}`} className="relative flex items-start justify-between gap-3">
+                  <li
+                    key={`${item.role}-${item.year}`}
+                    className="relative flex flex-col items-start gap-2 sm:flex-row sm:justify-between sm:gap-3"
+                  >
                     <span
                       aria-hidden="true"
                       className={`absolute -left-4 top-2 h-3.5 w-3.5 -translate-x-1/2 cursor-pointer rounded-[2px] border-2 transition-all duration-200 hover:scale-110 hover:shadow-sm ${
@@ -110,15 +113,15 @@ With a background in design, I pay close attention to details from layout and ty
                           : "border-zinc-300 bg-white hover:border-zinc-500 hover:bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-900 dark:hover:border-zinc-400 dark:hover:bg-zinc-800"
                       }`}
                     />
-                    <div className="max-w-[75%]">
+                    <div className="min-w-0 sm:max-w-[75%]">
                       <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
                         {item.role}
                       </h3>
-                      <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">
+                      <p className="mt-1 text-sm text-zinc-700 break-words dark:text-zinc-300">
                         {item.organization}
                       </p>
                     </div>
-                    <span className="rounded-sm border border-zinc-200 px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
+                    <span className="w-fit shrink-0 rounded-sm border border-zinc-200 px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
                       {item.year}
                     </span>
                   </li>
@@ -136,7 +139,7 @@ With a background in design, I pay close attention to details from layout and ty
               {currentlyLearning.map((item) => (
                 <li
                   key={item}
-                  className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-800/70"
+                  className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 break-words dark:border-zinc-700 dark:bg-zinc-800/70"
                 >
                   {item}
                 </li>
@@ -156,10 +159,12 @@ With a background in design, I pay close attention to details from layout and ty
                   href={item.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center justify-between rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm font-medium text-zinc-700 transition hover:border-zinc-300 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800/70 dark:text-zinc-200 dark:hover:border-zinc-600 dark:hover:bg-zinc-800"
+                  className="inline-flex items-center justify-between gap-3 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm font-medium text-zinc-700 transition hover:border-zinc-300 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800/70 dark:text-zinc-200 dark:hover:border-zinc-600 dark:hover:bg-zinc-800"
                 >
-                  <span>{item.label}</span>
-                  <span aria-hidden="true">-&gt;</span>
+                  <span className="break-words">{item.label}</span>
+                  <span aria-hidden="true" className="shrink-0">
+                    -&gt;
+                  </span>
                 </a>
               ))}
             </div>
