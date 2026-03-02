@@ -1,6 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
+
+import normalImage from "@/images/normal_image.jpg";
 
 type ChatRole = "user" | "bot";
 
@@ -17,11 +20,17 @@ interface ChatHistoryItem {
 }
 
 const STORAGE_KEY = "portfolio-chat-history-v1";
+const WELCOME_MESSAGE =
+  "Hi there! 👋🏻 Thanks for visiting my website. Feel free to ask me anything about my Porfolio";
+const LEGACY_WELCOME_MESSAGES = [
+  "Hi! I am Gemini. Ask me anything about this portfolio.",
+  "Hi! Ask me anything about Christian's portfolio.",
+];
 
 const defaultMessage: ChatMessage = {
   id: "welcome",
   role: "bot",
-  content: "Hi! I am Gemini. Ask me anything about this portfolio.",
+  content: WELCOME_MESSAGE,
   createdAt: Date.now(),
 };
 
@@ -36,6 +45,30 @@ function createMessage(role: ChatRole, content: string): ChatMessage {
 
 function formatTime(timestamp: number): string {
   return new Date(timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+function MessageAvatar({ role }: { role: ChatRole }) {
+  const isUser = role === "user";
+
+  if (!isUser) {
+    return (
+      <span
+        aria-hidden="true"
+        className="relative inline-flex h-8 w-8 shrink-0 overflow-hidden rounded-full border border-zinc-300 bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-800"
+      >
+        <Image src={normalImage} alt="Christian profile" fill sizes="32px" className="object-cover" />
+      </span>
+    );
+  }
+
+  return (
+    <span
+      aria-hidden="true"
+      className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-zinc-300 bg-zinc-100 text-[10px] font-semibold tracking-wide text-zinc-700 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-200"
+    >
+      YOU
+    </span>
+  );
 }
 
 export default function FloatingChatButton() {
@@ -70,7 +103,19 @@ export default function FloatingChatButton() {
           typeof item.createdAt === "number",
       );
 
-      setMessages(cleaned.length > 0 ? cleaned : [defaultMessage]);
+      const withUpdatedWelcome = cleaned.map((item) => {
+        if (item.id === "welcome" && item.role === "bot") {
+          return { ...item, content: WELCOME_MESSAGE };
+        }
+
+        if (item.role === "bot" && LEGACY_WELCOME_MESSAGES.includes(item.content)) {
+          return { ...item, content: WELCOME_MESSAGE };
+        }
+
+        return item;
+      });
+
+      setMessages(withUpdatedWelcome.length > 0 ? withUpdatedWelcome : [defaultMessage]);
       setIsLoaded(true);
     } catch {
       setMessages([defaultMessage]);
@@ -117,7 +162,8 @@ export default function FloatingChatButton() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to get chat response.");
+        const errorData = (await response.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(errorData?.error?.trim() || "Failed to get chat response.");
       }
 
       const data = (await response.json()) as { reply?: string };
@@ -128,8 +174,10 @@ export default function FloatingChatButton() {
       }
 
       setMessages((prev) => [...prev, createMessage("bot", replyText)]);
-    } catch {
-      setMessages((prev) => [...prev, createMessage("bot", "Sorry, something went wrong.")]);
+    } catch (error) {
+      const fallback = "Sorry, something went wrong.";
+      const message = error instanceof Error && error.message.trim() ? error.message.trim() : fallback;
+      setMessages((prev) => [...prev, createMessage("bot", message)]);
     } finally {
       setIsTyping(false);
     }
@@ -147,7 +195,18 @@ export default function FloatingChatButton() {
       {isOpen ? (
         <section className="fixed bottom-24 right-5 z-50 w-[calc(100vw-2.5rem)] max-w-sm overflow-hidden rounded-2xl border border-zinc-300 bg-white shadow-2xl dark:border-zinc-700 dark:bg-zinc-900">
           <header className="flex items-center justify-between bg-zinc-900 px-4 py-3 text-white">
-            <h2 className="text-sm font-semibold tracking-tight">Chat with Gemini</h2>
+            <div className="flex min-w-0 items-center gap-3">
+              <span className="relative inline-flex h-9 w-9 shrink-0 overflow-hidden rounded-full border border-zinc-200/70">
+                <Image src={normalImage} alt="Christian profile" fill sizes="36px" className="object-cover" />
+              </span>
+              <div className="min-w-0">
+                <h2 className="truncate text-sm font-semibold tracking-tight">Chat with Christian</h2>
+                <p className="inline-flex items-center gap-1.5 text-[11px] text-zinc-200/90">
+                  <span aria-hidden="true" className="h-2 w-2 rounded-full bg-emerald-400" />
+                  Active now
+                </p>
+              </div>
+            </div>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
@@ -163,8 +222,9 @@ export default function FloatingChatButton() {
               const isUser = message.role === "user";
 
               return (
-                <div key={message.id} className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-[85%] space-y-1 ${isUser ? "items-end" : "items-start"}`}>
+                <div key={message.id} className={`flex items-start gap-2 ${isUser ? "justify-end" : "justify-start"}`}>
+                  {!isUser ? <MessageAvatar role="bot" /> : null}
+                  <div className={`flex max-w-[82%] flex-col space-y-1 ${isUser ? "items-end" : "items-start"}`}>
                     <p
                       className={`rounded-2xl px-3 py-2 text-sm leading-5 ${
                         isUser
@@ -176,14 +236,16 @@ export default function FloatingChatButton() {
                     </p>
                     <p className="px-1 text-[11px] text-zinc-500 dark:text-zinc-400">{formatTime(message.createdAt)}</p>
                   </div>
+                  {isUser ? <MessageAvatar role="user" /> : null}
                 </div>
               );
             })}
 
             {isTyping ? (
-              <div className="flex justify-start">
+              <div className="flex items-start gap-2 justify-start">
+                <MessageAvatar role="bot" />
                 <p className="rounded-2xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-600 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300">
-                  Gemini is typing...
+                  Christian is typing...
                 </p>
               </div>
             ) : null}

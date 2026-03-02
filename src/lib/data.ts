@@ -36,6 +36,14 @@ export interface Recommendation {
   title: string;
 }
 
+export type SocialPlatform = "github" | "linkedin" | "instagram" | "facebook";
+
+export interface SocialLink {
+  label: string;
+  href: string;
+  platform: SocialPlatform;
+}
+
 export const profile: Profile = {
   name: "Christian Faith Mestola",
   roles: ["Web Developer", "Frontend Developer", "UI/UX Designer"],
@@ -84,7 +92,7 @@ export const projects: Project[] = [
     id: 3,
     title: "Zapchat",
     description:
-      "A data storytelling surface that turns weekly metrics into digestible trend summaries.",
+      "ZapChat is your go-to instant messaging platform that makes conversations quick, easy, and fun. With lightning-fast responses and a clean interface, staying connected has never been simpler.",
     tags: ["vue", "Qusar", "Laravel" , "PostgreSQL"],
     type: "Web",
     github: "https://example.com/insight-stream-code",
@@ -141,27 +149,31 @@ export const recommendations: Recommendation[] = [
   },
 ];
 
-export const socialLinks = [
+export const socialLinks: SocialLink[] = [
   {
     label: "GitHub",
     href: "https://github.com/CHRISTIANMESTOLA",
+    platform: "github",
   },
   {
     label: "LinkedIn",
     href: "https://www.linkedin.com/in/christian-faith-mestola",
+    platform: "linkedin",
   },
   {
     label: "Instagram",
     href: "https://www.instagram.com/christianfaithmestola",
+    platform: "instagram",
   },
   {
     label: "Facebook",
     href: "https://www.facebook.com/christianfaithmestola",
+    platform: "facebook",
   }
 ];
 
 export const currentlyLearning = [
-  "Advanced React Patterns",
+  "Django REST Framework",
   "Next.js Performance Optimization",
   "TypeScript Best Practices",
   "UI Motion and Micro-interactions",

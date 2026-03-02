@@ -21,6 +21,12 @@ interface GeminiResponse {
   candidates?: GeminiCandidate[];
 }
 
+interface GeminiErrorPayload {
+  error?: {
+    message?: string;
+  };
+}
+
 const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-2.0-flash";
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
@@ -94,7 +100,19 @@ export async function POST(request: Request) {
     if (!response.ok) {
       const errorText = await response.text();
       console.error("Gemini API error:", errorText);
-      return NextResponse.json({ error: "Gemini request failed." }, { status: 502 });
+
+      let providerMessage = "Gemini request failed.";
+      try {
+        const parsed = JSON.parse(errorText) as GeminiErrorPayload;
+        const parsedMessage = parsed.error?.message?.trim();
+        if (parsedMessage) {
+          providerMessage = parsedMessage;
+        }
+      } catch {
+        // Keep fallback message when provider response is not JSON.
+      }
+
+      return NextResponse.json({ error: providerMessage }, { status: 502 });
     }
 
     const data = (await response.json()) as GeminiResponse;

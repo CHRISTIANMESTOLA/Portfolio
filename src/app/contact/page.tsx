@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 
 import Container from "@/components/Container";
 import SectionCard from "@/components/SectionCard";
+import SocialIcon from "@/components/SocialIcon";
 import { socialLinks } from "@/lib/data";
 
 interface ContactFormData {
@@ -175,9 +176,12 @@ export default function ContactPage() {
                     href={link.href}
                     target="_blank"
                     rel="noreferrer"
-                    className="btn-secondary w-full justify-between"
+                    className="btn-secondary w-full justify-between gap-3"
                   >
-                    {link.label}
+                    <span className="flex min-w-0 items-center gap-2">
+                      <SocialIcon platform={link.platform} />
+                      <span className="truncate">{link.label}</span>
+                    </span>
                     <span aria-hidden="true">↗</span>
                   </a>
                 </li>

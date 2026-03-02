@@ -6,6 +6,7 @@ import GalleryCarousel from "@/components/GalleryCarousel";
 import HeroCard from "@/components/HeroCard";
 import ProjectCard from "@/components/ProjectCard";
 import SectionCard from "@/components/SectionCard";
+import SocialIcon from "@/components/SocialIcon";
 import StatChips from "@/components/StatChips";
 import { currentlyLearning, profile, projects, recommendations, socialLinks, techGroups } from "@/lib/data";
 
@@ -161,7 +162,10 @@ With a background in design, I pay close attention to details from layout and ty
                   rel="noreferrer"
                   className="inline-flex items-center justify-between gap-3 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm font-medium text-zinc-700 transition hover:border-zinc-300 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800/70 dark:text-zinc-200 dark:hover:border-zinc-600 dark:hover:bg-zinc-800"
                 >
-                  <span className="break-words">{item.label}</span>
+                  <span className="flex min-w-0 items-center gap-2">
+                    <SocialIcon platform={item.platform} />
+                    <span className="break-words">{item.label}</span>
+                  </span>
                   <span aria-hidden="true" className="shrink-0">
                     -&gt;
                   </span>
