@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 
 import StatChips from "@/components/StatChips";
 import darkModeHoverImage from "@/images/darmode_houver.jpg";
@@ -19,9 +20,31 @@ export default function HeroCard({ name, roles, location, summary }: HeroCardPro
     <section className="surface-card p-6 sm:p-8">
       <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
         <div className="space-y-4">
-          <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">{location}</p>
+          <p className="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              className="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M12 21s7-5.8 7-11a7 7 0 1 0-14 0c0 5.2 7 11 7 11Z" />
+              <circle cx="12" cy="10" r="2.5" />
+            </svg>
+            <span>{location}</span>
+          </p>
           <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl dark:text-zinc-100">
-            {name}
+            <span className="inline-flex items-center gap-1.5">
+              <span>{name}</span>
+              <span
+                className="inline-flex h-5 w-5 items-center justify-center"
+                aria-label="Verified profile"
+                title="Verified"
+              >
+                <CheckBadgeIcon aria-hidden="true" className="h-5 w-5 text-sky-500 dark:text-sky-400" />
+              </span>
+            </span>
           </h1>
           <p className="max-w-2xl text-base text-zinc-600 dark:text-zinc-300">{summary}</p>
           <StatChips items={roles} />

@@ -27,7 +27,9 @@ interface GeminiErrorPayload {
   };
 }
 
-const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-2.0-flash";
+const configuredModel = process.env.GEMINI_MODEL?.trim();
+const GEMINI_MODEL =
+  configuredModel?.replace(/^models\//, "") || "gemini-2.0-flash";
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
 function normalizeHistory(input: unknown): HistoryItem[] {
@@ -107,6 +109,11 @@ export async function POST(request: Request) {
         const parsedMessage = parsed.error?.message?.trim();
         if (parsedMessage) {
           providerMessage = parsedMessage;
+
+          if (parsedMessage.includes("is not found")) {
+            providerMessage +=
+              " Set GEMINI_MODEL to a valid generateContent model, for example gemini-2.0-flash.";
+          }
         }
       } catch {
         // Keep fallback message when provider response is not JSON.

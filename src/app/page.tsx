@@ -60,7 +60,18 @@ With a background in design, I pay close attention to details from layout and ty
          
           </SectionCard>
 
-          <SectionCard title="Featured Tech" description="Current stack at a glance">
+          <SectionCard
+            title="Featured Tech"
+            description="Current stack at a glance"
+            headerAction={
+              <Link
+                href="/stack"
+                className="text-sm font-medium text-zinc-700 transition hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100"
+              >
+                View All
+              </Link>
+            }
+          >
             <div className="space-y-3">
               {techGroups.map((group) => (
                 <div key={group.title} className="space-y-2">
@@ -69,27 +80,25 @@ With a background in design, I pay close attention to details from layout and ty
                 </div>
               ))}
             </div>
-            <div className="mt-4">
-              <Link href="/stack" className="btn-secondary">
-                View All
-              </Link>
-            </div>
           </SectionCard>
 
           <SectionCard
             title="Featured Projects"
             description="My  recent project builds"
+            headerAction={
+              <Link
+                href="/projects"
+                className="text-sm font-medium text-zinc-700 transition hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100"
+              >
+                See All Projects
+              </Link>
+            }
             className="lg:col-span-2"
           >
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {featuredProjects.map((project) => (
                 <ProjectCard key={project.id} project={project} />
               ))}
-            </div>
-            <div className="mt-4">
-              <Link href="/projects" className="btn-secondary">
-                See All Projects
-              </Link>
             </div>
           </SectionCard>
 
