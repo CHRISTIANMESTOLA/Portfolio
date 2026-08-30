@@ -13,9 +13,13 @@ export default function ExperiencePage() {
           </p>
         </header>
 
-        <ol className="relative space-y-5 border-l border-zinc-200 pl-6 dark:border-zinc-800 md:space-y-6 md:border-l-0 md:pl-0 md:before:absolute md:before:left-[8rem] md:before:top-0 md:before:h-full md:before:w-px md:before:bg-zinc-200 dark:md:before:bg-zinc-800">
-          {experience.map((item) => (
-            <ExperienceItem key={`${item.company}-${item.year}`} item={item} />
+        <ol className="relative space-y-6 border-l border-zinc-200 pl-6 dark:border-zinc-800 md:space-y-8 md:border-l-0 md:pl-0 md:before:absolute md:before:left-[10.25rem] md:before:top-0 md:before:h-full md:before:w-px md:before:bg-zinc-200 dark:md:before:bg-zinc-800">
+          {experience.map((item, index) => (
+            <ExperienceItem
+              key={`${item.company}-${item.year}-${index}`}
+              item={item}
+              isFirst={index === 0}
+            />
           ))}
         </ol>
       </Container>

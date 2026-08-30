@@ -144,6 +144,7 @@ export default function FloatingChatButton() {
 
     const userMessage = createMessage("user", content);
     const historyBeforeSend = requestHistory;
+    const botMessageId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
@@ -166,19 +167,57 @@ export default function FloatingChatButton() {
         throw new Error(errorData?.error?.trim() || "Failed to get chat response.");
       }
 
-      const data = (await response.json()) as { reply?: string };
-      const replyText = data.reply?.trim();
+      const contentType = response.headers.get("content-type") || "";
 
-      if (!replyText) {
-        throw new Error("Empty chat response.");
+      if (contentType.includes("text/plain")) {
+        // Streaming response — read chunks and update message in real time
+        const reader = response.body?.getReader();
+        if (!reader) throw new Error("No response body.");
+
+        const decoder = new TextDecoder();
+        let accumulated = "";
+
+        // Add an empty bot message that we'll update
+        setMessages((prev) => [
+          ...prev,
+          { id: botMessageId, role: "bot", content: "", createdAt: Date.now() },
+        ]);
+        setIsTyping(false);
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          accumulated += decoder.decode(value, { stream: true });
+          const current = accumulated;
+          setMessages((prev) =>
+            prev.map((msg) => (msg.id === botMessageId ? { ...msg, content: current } : msg)),
+          );
+        }
+
+        if (!accumulated.trim()) {
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === botMessageId ? { ...msg, content: "No reply generated." } : msg,
+            ),
+          );
+        }
+      } else {
+        // Fallback: non-streaming JSON response
+        const data = (await response.json()) as { reply?: string };
+        const replyText = data.reply?.trim();
+
+        if (!replyText) {
+          throw new Error("Empty chat response.");
+        }
+
+        setMessages((prev) => [...prev, createMessage("bot", replyText)]);
+        setIsTyping(false);
       }
-
-      setMessages((prev) => [...prev, createMessage("bot", replyText)]);
     } catch (error) {
       const fallback = "Sorry, something went wrong.";
       const message = error instanceof Error && error.message.trim() ? error.message.trim() : fallback;
       setMessages((prev) => [...prev, createMessage("bot", message)]);
-    } finally {
       setIsTyping(false);
     }
   };

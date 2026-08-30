@@ -36,7 +36,7 @@ export interface Recommendation {
   title: string;
 }
 
-export type SocialPlatform = "github" | "linkedin" | "instagram" | "facebook";
+export type SocialPlatform = "github" | "linkedin" | "instagram" | "facebook" | "whatsapp" | "telegram";
 
 export interface SocialLink {
   label: string;
@@ -46,7 +46,7 @@ export interface SocialLink {
 
 export const profile: Profile = {
   name: "Christian Faith Mestola",
-  roles: ["Web Developer", "Frontend Developer", "UI/UX Designer"],
+  roles: ["Fullstack Web Developer", "Frontend Developer", "UI/UX Designer"],
   location: "Tagum Davao Del Norte, Philippines",
   summary:
     "I design and build fast, accessible interfaces for product teams that care about clarity and craft.",
@@ -68,8 +68,18 @@ export const techGroups: TechGroup[] = [
 ];
 
 export const projects: Project[] = [
+{
+  id: 1,
+  title: "Shepherd",
+  description:
+    "A modern Bible companion app that makes Scripture study more personal through verse-based notes, Bible search, daily verses, devotionals, and personalized study tools.",
+  tags: ["React Native", "Expo", "Bible API", "Sqlite"],
+  type: "Mobile",
+  github: "https://github.com/yourusername/shepherd",
+  live: "https://shepherd-web-psi.vercel.app/",
+},
   {
-    id: 1,
+    id: 2,
     title: "Dentatrack",
     description:
       "A smart recovery system that transforms dental post-operative care with automation and predictive analytics.",
@@ -79,17 +89,27 @@ export const projects: Project[] = [
     live: "https://jimenezdentalclinic.com",
   },
   {
-    id: 2,
+    id: 3,
     title: "LMS-leave Monitoring",
     description:
       "A digital leave monitoring system designed to streamline employee leave requests and improve record management for Tagum City Hall.",
-    tags: ["Quasar","Vue","Laravel", "Msql"],
+    tags: ["Quasar","Vue","Laravel", "MSsql"],
     type: "Web",
     github: "https://example.com/pocket-planner-code",
-    live: "",
+    live: "http://lms.tagum/login",
   },
   {
-    id: 3,
+  id: 4,
+  title: "Tagum Youth Information System",
+  description:
+    "A centralized youth management platform designed to streamline youth registration, validation, events, announcements, scholarships, facility bookings, and youth participation tracking.",
+  tags: ["Vue.js", "Quasar", "Laravel", "MSsql"],
+  type: "Web",
+  github: "https://github.com/yourusername/tagum-youth-information-system",
+  live: "",
+},
+  {
+    id: 5,
     title: "Zapchat",
     description:
       "ZapChat is your go-to instant messaging platform that makes conversations quick, easy, and fun. With lightning-fast responses and a clean interface, staying connected has never been simpler.",
@@ -102,27 +122,43 @@ export const projects: Project[] = [
 ];
 
 export const experience: Experience[] = [
-  {
+    {
     company: "City Goverment of Tagum",
-    role: "Web Developer Intern ",
-    year: "Present",
-    location: "onsite",
+    role: "Fullstack Developer",
+    year: "2026 - Present",
+    location: "Tagum Davao del Norte",
     details:
       "Leading design system adoption, performance budgets, and interaction quality across multiple product surfaces.",
   },
   {
-    company: "Northgrid Labs",
-    role: "Frontend Engineer",
-    year: "2021 - 2024",
-    location: "Placeholder City",
+    company: "City Goverment of Tagum",
+    role: "Web Developer Intern ",
+    year: "2026",
+    location: "Tagum Davao del Norte",
     details:
-      "Built and maintained customer-facing dashboards, reusable form workflows, and accessibility-first component patterns.",
+      "Leading design system adoption, performance budgets, and interaction quality across multiple product surfaces.",
   },
+  {
+  company: "Orlando Sublimation",
+  role: "Graphic Designer",
+  year: "2023 - 2026",
+  location: "Tagum, Davao Del Norte",
+  details:
+    "Created custom graphics, branding materials, promotional designs, and motocross graphics while working closely with clients to deliver visually engaging and production-ready designs.",
+},
+{
+  company: "Freelance",
+  role: "Graphic Designer",
+  year: "2023 - 2026",
+  location: "Remote",
+  details:
+    "Created custom graphics, branding materials, promotional designs, and motocross graphics while working closely with clients to deliver visually engaging and production-ready designs.",
+},
   {
     company: "Davao Del Norte State College.",
     role: "Bachelor of Science in Information Technology",
     year: "2022 - present",
-    location: "Panbo City, Davao del Norte",
+    location: "Panabo City, Davao Del Norte",
     details:
       "Delivered marketing pages, analytics integration, and CMS-driven sections with a strong focus on consistency.",
   },
@@ -150,9 +186,19 @@ export const recommendations: Recommendation[] = [
 ];
 
 export const socialLinks: SocialLink[] = [
+    {
+    label: "Telegram",
+    href: "https://t.me/chrischan10",
+    platform: "telegram",
+  },
+  {
+    label: "WhatsApp",
+    href: "https://wa.me/639120509416",
+    platform: "whatsapp",
+  },
   {
     label: "GitHub",
-    href: "https://github.com/CHRISTIANMESTOLA",
+    href: "https://github.com/channy051022",
     platform: "github",
   },
   {

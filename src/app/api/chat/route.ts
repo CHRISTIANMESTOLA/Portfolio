@@ -7,30 +7,49 @@ interface HistoryItem {
   content: string;
 }
 
-interface GeminiPart {
-  text?: string;
-}
-
-interface GeminiCandidate {
-  content?: {
-    parts?: GeminiPart[];
-  };
-}
-
 interface GeminiResponse {
-  candidates?: GeminiCandidate[];
-}
-
-interface GeminiErrorPayload {
   error?: {
     message?: string;
   };
 }
 
-const configuredModel = process.env.GEMINI_MODEL?.trim();
-const GEMINI_MODEL =
-  configuredModel?.replace(/^models\//, "") || "gemini-2.0-flash";
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+const GEMINI_MODEL = process.env.GEMINI_MODEL?.trim() || "gemini-3.6-flash";
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:streamGenerateContent`;
+
+const SYSTEM_PROMPT = `You are a friendly, helpful AI assistant representing Christian Faith Mestola's portfolio website. Answer questions about Christian based on the following information. Keep responses concise, warm, and conversational. If you don't know something specific, say so honestly rather than making things up.
+
+**About Christian:**
+- Name: Christian Faith Mestola
+- Roles: Web Developer, Frontend Developer, UI/UX Designer
+- Location: Tagum, Davao Del Norte, Philippines
+- Education: Bachelor of Science in Information Technology at Davao Del Norte State College (2022 – present)
+- Summary: Designs and builds fast, accessible interfaces for product teams that care about clarity and craft.
+
+**Tech Stack:**
+- Frontend: Next.js, Vue, Tailwind CSS, Quasar, Bootstrap
+- Backend: Python, Django, PostgreSQL, REST APIs, Laravel, PHP
+- Tools: GitHub Actions, Vercel, Docker, Figma, Azure
+
+**Projects:**
+1. Shepherd – A Bible companion app for personal Scripture study (React Native, Expo, Bible API, SQLite)
+2. Dentatrack – Smart dental post-operative recovery system (Bootstrap, Django, PostgreSQL)
+3. LMS-Leave Monitoring – Leave request system for Tagum City Hall (Quasar, Vue, Laravel, MSSQL)
+4. Tagum Youth Information System – Youth management platform (Vue.js, Quasar, Laravel, MSSQL)
+5. ZapChat – Instant messaging platform (Vue, Quasar, Laravel, PostgreSQL)
+
+**Experience:**
+- Web Developer Intern at City Government of Tagum (Present, Onsite)
+
+**Currently Learning:**
+- Django REST Framework, Next.js Performance Optimization, TypeScript Best Practices, UI Motion and Micro-interactions
+
+**Socials:**
+- GitHub: https://github.com/channy051022
+- LinkedIn: https://www.linkedin.com/in/christian-faith-mestola
+- Instagram: https://www.instagram.com/christianfaithmestola
+- Facebook: https://www.facebook.com/christianfaithmestola
+
+Respond as if you are an AI assistant for Christian's portfolio. Be helpful, positive, and professional.`;
 
 function normalizeHistory(input: unknown): HistoryItem[] {
   if (!Array.isArray(input)) return [];
@@ -46,19 +65,6 @@ function normalizeHistory(input: unknown): HistoryItem[] {
       );
     })
     .slice(-30);
-}
-
-function extractReply(data: GeminiResponse): string | null {
-  const parts = data.candidates?.[0]?.content?.parts;
-  if (!parts || parts.length === 0) return null;
-
-  const text = parts
-    .map((part) => part.text)
-    .filter((value): value is string => typeof value === "string")
-    .join("\n")
-    .trim();
-
-  return text.length > 0 ? text : null;
 }
 
 export async function POST(request: Request) {
@@ -88,12 +94,15 @@ export async function POST(request: Request) {
       },
     ];
 
-    const response = await fetch(`${GEMINI_URL}?key=${apiKey}`, {
+    const response = await fetch(`${GEMINI_URL}?alt=sse&key=${apiKey}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        systemInstruction: {
+          parts: [{ text: SYSTEM_PROMPT }],
+        },
         contents,
       }),
       cache: "no-store",
@@ -101,19 +110,14 @@ export async function POST(request: Request) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("Gemini API error:", errorText);
+      console.error("Gemini API error:", response.status, errorText);
 
       let providerMessage = "Gemini request failed.";
       try {
-        const parsed = JSON.parse(errorText) as GeminiErrorPayload;
+        const parsed = JSON.parse(errorText) as GeminiResponse;
         const parsedMessage = parsed.error?.message?.trim();
         if (parsedMessage) {
           providerMessage = parsedMessage;
-
-          if (parsedMessage.includes("is not found")) {
-            providerMessage +=
-              " Set GEMINI_MODEL to a valid generateContent model, for example gemini-2.0-flash.";
-          }
         }
       } catch {
         // Keep fallback message when provider response is not JSON.
@@ -122,14 +126,58 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: providerMessage }, { status: 502 });
     }
 
-    const data = (await response.json()) as GeminiResponse;
-    const reply = extractReply(data);
+    // Stream the response back to the client
+    const stream = new ReadableStream({
+      async start(controller) {
+        const reader = response.body?.getReader();
+        if (!reader) {
+          controller.close();
+          return;
+        }
 
-    if (!reply) {
-      return NextResponse.json({ error: "No reply generated." }, { status: 502 });
-    }
+        const decoder = new TextDecoder();
+        let buffer = "";
 
-    return NextResponse.json({ reply });
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split("\n");
+            buffer = lines.pop() || "";
+
+            for (const line of lines) {
+              if (!line.startsWith("data: ")) continue;
+              const jsonStr = line.slice(6).trim();
+              if (!jsonStr) continue;
+
+              try {
+                const chunk = JSON.parse(jsonStr);
+                const text = chunk?.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (text) {
+                  controller.enqueue(new TextEncoder().encode(text));
+                }
+              } catch {
+                // Skip malformed JSON chunks
+              }
+            }
+          }
+        } catch (error) {
+          console.error("Stream reading error:", error);
+        } finally {
+          controller.close();
+        }
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Cache-Control": "no-cache",
+      },
+    });
   } catch (error) {
     console.error("/api/chat error:", error);
     return NextResponse.json({ error: "Unexpected server error." }, { status: 500 });

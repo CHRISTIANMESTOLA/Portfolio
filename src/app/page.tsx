@@ -22,12 +22,22 @@ const experienceTimeline = [
   {
     role: "Web Developer Intern",
     organization: "City Goverment of Tagum",
-    year: "present",
+    year: "2026",
+  },
+    {
+    role: "Graphic Designer",
+    organization: "Orlando Sublimation",
+    year: "2023-2026",
+  },
+  {
+    role: "Freelance Graphic Designer",
+    organization: "Remote",
+    year: "2023 - 2026",
   },
   {
     role: "Bachelor of Science in Information Technology",
     organization: "Davao Del Norte State College",
-    year: "2022",
+    year: "2022 - 2026",
   },
   {
     role: "Hello World! 👋",
@@ -47,16 +57,16 @@ export default function HomePage() {
         <section className="mt-6 grid gap-4 sm:gap-5 lg:grid-cols-3" aria-label="Home sections">
           <SectionCard
             title="About Me"
-            description="Short placeholder intro"
+            // description="Short placeholder intro"
             className="lg:col-span-2"
           >
             <p className="text-sm text-justify leading-6 text-zinc-600 break-words dark:text-zinc-400">
-I’m a passionate Web Developer and UI/UX Designer who loves turning ideas into clean, functional, and user-centered digital experiences. I enjoy building modern web applications that are not only visually appealing but also practical and intuitive to use.
+I’m a passionate Web Developer and UI/UX Designer who loves turning ideas into clean, functional, and user-centered digital experiences. I enjoy building modern web applications that are not only visually appealing but also practical and intuitive to use.I’m a Full-Stack Web Developer passionate about building modern, responsive, and user-friendly web applications. I enjoy turning ideas into functional digital solutions, from designing intuitive interfaces to developing reliable backend systems and APIs.
             </p>
             <p className="mt-2 text-sm text-justify leading-6 text-zinc-600 break-words dark:text-zinc-400">
-With a background in design, I pay close attention to details from layout and typography to user flow and overall experience. For me, good design is not just about how it looks, but how it works.           </p>
-            <p className="text-sm text-justify leading-6 text-zinc-600 break-words dark:text-zinc-400" >I’m continuously learning and improving my skills to become a better and more effective developer. Every project I build is part of my growth journey refining my fundamentals, exploring new technologies, and pushing myself to write better, cleaner code.</p>
-            <p className="mt-2 text-sm text-justify leading-6 text-zinc-600 break-words dark:text-zinc-400" >I believe growth never stops. I’m building myself one line of code at a time.</p>
+I have experience working with Vue.js, Quasar, Pinia, Laravel, PHP, MySQL, PostgreSQL, and REST APIs, along with tools such as Git, Docker, Vite, and Figma. I’m comfortable working across both frontend and backend development, including UI implementation, API integration, database management, authentication, and system architecture.          </p>
+            <p className="text-sm text-justify leading-6 text-zinc-600 break-words dark:text-zinc-400" >Beyond development, I have a background in UI/UX and graphic design, which allows me to approach projects not only from a technical perspective but also with a strong focus on usability, visual quality, and user experience.</p>
+            <p className="mt-2 text-sm text-justify leading-6 text-zinc-600 break-words dark:text-zinc-400" >I enjoy solving technical problems, learning new technologies, and continuously improving the applications I build. My goal is to grow as a Software Engineer and create reliable, scalable, and meaningful software that solves real-world problems.</p>
          
           </SectionCard>
 
