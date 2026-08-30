@@ -20,6 +20,11 @@ const showRecommendations = false;
 
 const experienceTimeline = [
   {
+    role: "Fullstack Developer",
+    organization: "City Goverment of Tagum",
+    year: "2026 - Present",
+  },
+  {
     role: "Web Developer Intern",
     organization: "City Goverment of Tagum",
     year: "2026",
